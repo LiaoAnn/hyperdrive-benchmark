@@ -164,10 +164,11 @@ app.get(
   }),
   zValidator('query', TestDOParamsSchema),
   async c => {
-    const region = c.req.query('region') || 'default';
+    const region = (c.req.query('region') ||
+      'apac') as DurableObjectLocationHint;
 
-    const id = c.env.BENCHMARK_DO.idFromName(`test-${region}`);
-    const stub = c.env.BENCHMARK_DO.get(id);
+    const id = c.env.BENCHMARK_DO.idFromName(`test-${region}-${Date.now()}`);
+    const stub = c.env.BENCHMARK_DO.get(id, { locationHint: region });
 
     const response = await stub.fetch(
       new Request('http://dummy/query', { method: 'GET' }),

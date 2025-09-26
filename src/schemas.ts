@@ -37,7 +37,7 @@ export const RunBenchmarkParamsSchema = z.object({
 
 // 測試 DO 請求參數
 export const TestDOParamsSchema = z.object({
-  region: z.string().optional().default('default'),
+  region: LocationHintSchema.optional().default('apac'),
 });
 
 // 基準測試結果 schema
@@ -55,7 +55,7 @@ export const BenchmarkResultSchema = z.object({
 
 // 單個 DO 測試響應 schema
 export const SingleDOTestResponseSchema = z.object({
-  region: z.string(),
+  region: LocationHintSchema,
   latency: z.number(),
   queryType: QueryTypeSchema.optional(),
   queryDescription: z.string().optional(),
