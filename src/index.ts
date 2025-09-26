@@ -77,6 +77,7 @@ app.get(
         // 創建帶有模式參數的請求（地區信息已經通過 location hint 隱含）
         const url = new URL(c.req.url);
         url.searchParams.set('mode', mode);
+        url.pathname = '/query'; // 修改路徑為 DO 期望的 /query
 
         const request = new Request(url.toString(), {
           method: c.req.method,
@@ -172,8 +173,7 @@ app.get(
   },
 );
 
-app.get(
-  '/openapi',
+app.get('/openapi', (c, ...args) =>
   openAPIRouteHandler(app, {
     documentation: {
       info: {
@@ -181,11 +181,9 @@ app.get(
         version: '1.0.0',
         description: 'Cloudflare Hyperdrive 性能基準測試 API',
       },
-      servers: [
-        { url: 'https://your-worker-url.workers.dev', description: '生產環境' },
-      ],
+      servers: [{ url: new URL(c.req.url).origin }],
     },
-  }),
+  })(c, ...args),
 );
 
 export default app;
