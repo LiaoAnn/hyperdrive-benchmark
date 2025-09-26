@@ -56,6 +56,11 @@ app.get(
   }),
   zValidator('query', RunBenchmarkParamsSchema),
   async c => {
+    // pls set DIRECT_DB_URL first
+    if (!c.env.DIRECT_DB_URL) {
+      return c.json({ error: 'DIRECT_DB_URL is not set' }, 400);
+    }
+
     const mode: BenchmarkMode = (c.req.query('mode') ||
       'hyperdrive') as BenchmarkMode;
     const regionsParam = c.req.query('regions');
