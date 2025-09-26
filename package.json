@@ -1,15 +1,25 @@
 {
-  "name": "cf-worker-typescript-template",
+  "name": "hyperdrive-benchmark",
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write src/**/*.ts --ignore-path .gitignore",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "db:generate": "drizzle-kit generate",
+    "db:apply": "drizzle-kit migrate"
   },
   "dependencies": {
-    "hono": "^4.9.8"
+    "@hono/standard-validator": "^0.1.5",
+    "@hono/zod-validator": "^0.7.3",
+    "drizzle-kit": "^0.31.4",
+    "drizzle-orm": "^0.44.5",
+    "drizzle-seed": "^0.3.1",
+    "hono": "^4.9.8",
+    "hono-openapi": "^1.0.8",
+    "postgres": "^3.4.7",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@eslint/js": "^9.23.0",

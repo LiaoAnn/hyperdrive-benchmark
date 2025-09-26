@@ -4,7 +4,7 @@
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "cf-worker-typescript-template",
+  "name": "hyperdrive-benchmark",
   "main": "src/index.ts",
   "compatibility_date": "2025-01-29",
   "compatibility_flags": [
@@ -18,11 +18,32 @@
     "port": 8787,
     "inspector_port": 9229
   },
-  "vars": {},
   "kv_namespaces": [],
   "d1_databases": [],
   // remove queues setting when enabling remote dev
-  "queues": {}
+  "queues": {},
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "BENCHMARK_DO",
+        "class_name": "BenchmarkDO",
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "BenchmarkDO"
+      ]
+    }
+  ],
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "a17557803f154d0da88fce02290c2ada",
+    }
+  ]
   /**
    * Smart Placement
    * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

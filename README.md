@@ -1,70 +1,112 @@
-# CF Worker TypeScript Template
+# Hyperdrive benchmark
 
-A template for developing Cloudflare Workers using TypeScript and `pnpm`.
+This repository contains the code and instructions to run the Hyperdrive benchmark, which evaluates the performance of global database connection with [Cloudflare Hyperdrive](https://www.cloudflare.com/developer-platform/products/hyperdrive/).
 
-## Features
+To evaluate the performance of Hyperdrive, we will simulate a scenario that connects to a PostgreSQL database from multiple regions using Cloudflare Workers and Hyperdrive. The benchmark will measure the latency and throughput of database queries executed from different geographic locations.
 
-- **TypeScript**: Write strongly-typed, modern JavaScript.
-- **Hono**: A lightweight, high-performance web framework.
-- **ESLint**: Linting for better code quality.
-- **Prettier**: Consistent code formatting.
-- **Wrangler**: Simplified deployment and development with Cloudflare Workers.
-- **pnpm**: Fast and efficient package manager.
+## Tech Stack
 
-## Getting Started
+- [Cloudflare Workers](https://workers.cloudflare.com/) - Serverless platform to run the benchmark code.
+- [Cloudflare Hyperdrive](https://www.cloudflare.com/developer-platform/products/hyperdrive/) - Global database connection service.
+- [Cloudflare Durable Objects](https://developers.cloudflare.com/workers/learning/using-durable-objects/) - State management for Workers.
+- [PostgreSQL](https://www.postgresql.org/) - Relational database.
+- [Drizzle ORM](https://orm.drizzle.team/) - Type-safe ORM for database interactions.
+- [Zod](https://zod.dev/) - Schema validation and type safety.
+- [@hono/zod-validator](https://github.com/honojs/middleware/tree/main/packages/zod-validator) - Request validation middleware.
 
-### Prerequisites
+## API Documentation
 
-Make sure you have the following installed:
+The API includes automatic request validation and OpenAPI documentation:
 
-- [Node.js](https://nodejs.org/) (v16 or higher)
-- [pnpm](https://pnpm.io/) (v8 or higher)
-- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install/)
+- **OpenAPI Spec**: `GET /openapi.json` - Complete API specification
+- **Request Validation**: All endpoints validate query parameters using Zod schemas
+- **Type Safety**: Full TypeScript types for all API interactions
 
-And create a docker volume for pnpm:
+### Available Endpoints
+
+- `GET /run-benchmark` - Run parallel benchmarks across multiple regions
+- `GET /test-do` - Test a single Durable Object instance
+- `GET /ping` - Health check endpoint
+- `GET /openapi.json` - OpenAPI specification
+
+## Architecture
+
+The benchmark system consists of:
+
+1. **Main Worker**: Receives benchmark requests and orchestrates tests across regions
+2. **Durable Objects**: Execute database queries in different regions and measure latency
+3. **Hyperdrive**: Provides optimized database connections
+4. **PostgreSQL Database**: Target database for performance testing
+
+## Database Schema
+
+The benchmark uses a realistic e-commerce database schema with the following tables:
+
+- **users**: User accounts
+- **products**: Product catalog
+- **orders**: Customer orders
+- **order_items**: Order line items
+- **reviews**: Product reviews
+- **categories**: Product categories
+
+## Available Benchmark Queries
+
+- `simpleCount`: Count total users
+- `simpleSelect`: Select products (limit 10)
+- `joinUsersOrders`: Join users with their orders
+- `complexAggregation`: Complex aggregation with multiple joins
+- `subquery`: Subquery for high-value users
+- `fullTextSearch`: Full-text search in products
+- `bulkInsert`: Bulk insert test users
+- `bulkUpdate`: Bulk update product stock
+- `transaction`: Multi-table transaction
+
+## Setup
+
+See [SETUP.md](./SETUP.md) for detailed setup instructions.
+
+## Usage
+
+After setup, deploy the worker and run benchmarks:
 
 ```bash
-pnpm store path
-# it will be something like /home/user/.local/share/pnpm/store/v10
+# Get API documentation
+curl "https://your-worker.hyperdrive-benchmark.workers.dev/openapi.json"
 
-# set the PNPM_HOME environment variable
-export PNPM_HOME=/home/user/.local/share/pnpm/store
+# Run benchmark across default regions (with Hyperdrive)
+curl "https://your-worker.hyperdrive-benchmark.workers.dev/run-benchmark"
 
-docker volume create \
-  --driver local \
-  --opt type=none \
-  --opt device=$PNPM_HOME \
-  --opt o=bind \
-  pnpm_store
+# Run benchmark across default regions (without Hyperdrive)
+curl "https://your-worker.hyperdrive-benchmark.workers.dev/run-benchmark?mode=no-hyperdrive"
+
+# Run benchmark across specific regions
+curl "https://your-worker.hyperdrive-benchmark.workers.dev/run-benchmark?regions=wnam,enam,eeur&mode=hyperdrive"
+
+# Single region test
+curl "https://your-worker.hyperdrive-benchmark.workers.dev/test-do?region=wnam"
 ```
 
-### Installation
+## Results
 
-1. Clone this repository:
+The benchmark returns latency measurements and statistics:
 
-   ```bash
-   git clone https://github.com/your-repo/cf-worker-typescript-template.git
-   cd cf-worker-typescript-template
-   ```
-
-2. Edit the `wrangler.toml` file and replace the `name` with your own.
-
-3. Install dependencies:
-
-   ```bash
-   pnpm install
-   ```
-
-4. Start the development server:
-
-   ```bash
-   pnpm dev
-   ```
-
-### Deployment
-
-To deploy your worker, run:
-
-```bash
-pnpm deploy
+```json
+{
+  "results": [
+    {
+      "region": "asia",
+      "latency": 45,
+      "result": {
+        "current_time": "2025-09-26T10:30:00.000Z",
+        "message": "test"
+      }
+    }
+  ],
+  "summary": {
+    "totalTests": 1,
+    "avgLatency": 45,
+    "minLatency": 45,
+    "maxLatency": 45
+  }
+}
 ```
