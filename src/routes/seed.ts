@@ -10,7 +10,7 @@ const app = new Hono<{
 }>();
 
 app.post(
-  '/seed',
+  '/',
   describeRoute({
     description: '使用 Drizzle Seed 生成測試資料填充資料庫',
     responses: {
