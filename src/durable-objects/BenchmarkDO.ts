@@ -37,10 +37,7 @@ export class BenchmarkDO extends DurableObject<CloudflareBindings> {
         client = connectionResult.client;
       } else {
         // 使用直接數據庫連接 (no-hyperdrive mode)
-        // 注意：這裡需要環境變量中包含直接的數據庫連接字符串
-        const directConnectionString =
-          this.env.DIRECT_DB_URL || this.env.HYPERDRIVE.connectionString;
-        const connectionResult = createDb(directConnectionString);
+        const connectionResult = createDb(this.env.DIRECT_DB_URL);
         db = connectionResult.db;
         client = connectionResult.client;
       }
