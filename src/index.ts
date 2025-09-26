@@ -117,6 +117,12 @@ app.get(
     const minLatency = latencies.length > 0 ? Math.min(...latencies) : 0;
     const maxLatency = latencies.length > 0 ? Math.max(...latencies) : 0;
 
+    // 構建各個地區的延遲映射
+    const regionLatencies: Record<string, number> = {};
+    for (const result of successfulResults) {
+      regionLatencies[result.region] = result.latency!;
+    }
+
     return c.json({
       results,
       summary: {
@@ -128,6 +134,7 @@ app.get(
         minLatency,
         maxLatency,
         testedRegions: locationHints,
+        regionLatencies,
       },
     });
   },

@@ -74,6 +74,7 @@ export const BenchmarkSummarySchema = z.object({
   minLatency: z.number(),
   maxLatency: z.number(),
   testedRegions: z.array(z.string()),
+  regionLatencies: z.record(z.string(), z.number()),
 });
 
 // 運行基準測試響應 schema
