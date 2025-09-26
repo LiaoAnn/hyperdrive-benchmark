@@ -72,11 +72,15 @@ app.get(
 
     const results: BenchmarkResult[] = [];
 
+    const seed = Date.now();
+
     // 並行執行所有地區的測試
     const testPromises = locationHints.map(async locationHint => {
       try {
         // 使用 location hint 創建 DO
-        const id = c.env.BENCHMARK_DO.idFromName(`benchmark-${locationHint}`);
+        const id = c.env.BENCHMARK_DO.idFromName(
+          `benchmark-${locationHint}-${seed}`,
+        );
         const stub = c.env.BENCHMARK_DO.get(id, { locationHint });
 
         // 創建帶有模式參數的請求（地區信息已經通過 location hint 隱含）
