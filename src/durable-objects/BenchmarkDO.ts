@@ -112,7 +112,6 @@ export class BenchmarkDO extends DurableObject<CloudflareBindings> {
           latency,
           queryType,
           queryDescription,
-          result: Array.isArray(result) ? result.slice(0, 10) : result, // 限制結果大小
           resultCount: Array.isArray(result) ? result.length : 1,
         }),
         {

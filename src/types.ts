@@ -43,7 +43,6 @@ export type DOTestResponse = TestResponse;
 // Worker 層的基準測試結果
 export interface BenchmarkResult {
   region: DurableObjectLocationHint;
-  mode: BenchmarkMode;
   success: boolean;
   latency?: number; // 在錯誤情況下可能沒有 latency
   queryType?: QueryType;

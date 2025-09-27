@@ -97,12 +97,11 @@ app.get(
         // 調用 DO 的查詢
         const response = await stub.fetch(request);
         const result = (await response.json()) as DOQueryResponse;
-        return { region: locationHint, mode, ...result, success: true };
+        return { region: locationHint, ...result, success: true };
       } catch (error) {
         console.error(`Error testing region ${locationHint}:`, error);
         return {
           region: locationHint,
-          mode,
           error: error instanceof Error ? error.message : 'Unknown error',
           success: false,
         };
@@ -127,24 +126,16 @@ app.get(
     const minLatency = latencies.length > 0 ? Math.min(...latencies) : 0;
     const maxLatency = latencies.length > 0 ? Math.max(...latencies) : 0;
 
-    // 構建各個地區的延遲映射
-    const regionLatencies: Record<string, number> = {};
-    for (const result of successfulResults) {
-      regionLatencies[result.region] = result.latency!;
-    }
-
     return c.json({
+      mode,
       results,
       summary: {
-        mode,
         totalTests: results.length,
         successfulTests: successfulResults.length,
         failedTests: results.length - successfulResults.length,
         avgLatency,
         minLatency,
         maxLatency,
-        testedRegions: locationHints,
-        regionLatencies,
       },
     });
   },
